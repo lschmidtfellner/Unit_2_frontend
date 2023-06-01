@@ -19,3 +19,10 @@ nav {
 ul {
   list-style: none;
 }
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
