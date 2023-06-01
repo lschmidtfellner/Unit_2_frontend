@@ -1,0 +1,21 @@
+nav {
+  display: flex;
+}
+
+#nav-items {
+  display: flex;
+}
+
+.nav-item {
+  padding: 0 20px 0 20px;
+}
+
+#recommendationForm {
+  display: flex;
+  flex-direction: column;
+  width: 30vw;
+}
+
+ul {
+  list-style: none;
+}

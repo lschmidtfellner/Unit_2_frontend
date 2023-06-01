@@ -1,12 +1,16 @@
 # Project Proposal
 
-For my second project, I aim to create a web app that takes an input of one or more track/artist from spotify and generates a playlist based around it. I also want to incorporate an option that filters for only less popular music in order to dredge up deeper tracks.
+For my second project, I aim to create a web app that takes an input of one or more track/artist from spotify and generates a batch of recommendations based around it. I also want to incorporate an option that filters for only less popular music in order to dredge up deeper tracks.
 
 ## Routes and models
 
-I will be using a model for songs that stores only a few of the properties of spotify's song documents.
+I will be using a model for songs that stores only a few of the properties of spotify's song documents. Songs will be stored within another model for batches of recommendations.
 
 First i will be using a GET request to the spotify API that accepts the parameter of a song URL or objectID to fetch a songs information from spotify. Then comes another get request to spotify that uses the genre/popularity parameters to search for music that shares the same genres. From there, each chosen song will be POSTed on my remote API as a document. A DELETE request will be put in place to handle disposing of entire playlists, and a PUT request will be up for editing songs within existing playlists.
+
+My database will be seeded by querying the spotify API based on given parameters, and storing songs as new documents with a limited number of parameters. 
+
+I will have a separate collection for posting liked songs from batches.
 
 ## User Stories
 
@@ -21,4 +25,14 @@ I want a simple interface in which I can feed a song url and a popularity quotie
 
 #### Stretch Goals
 
-I want to store playlists or individual songs on my remote API, and make them retrievable at a later time. I want to embed song previews, album art, and other info. I want to see if I can effectively implement a loading screen.
+I want to store playlists or individual songs on my remote API, and make them retrievable at a later time. 
+I want to embed song previews, album art, and other info. 
+I want to see if I can effectively implement a loading screen.
+I want to be able to add songs to a playlist from my app, if the spotify API doesnt limit me making too many requests.
+
+
+- rescope
+- move batches to stretch goals
+- create a superuser model
+- create a favorites model
+- favorites will have a userID as reference
