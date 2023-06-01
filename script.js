@@ -104,7 +104,7 @@ const openLikes = async () => {
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
         deleteButton.addEventListener('click', function () {
-          fetch(`http://localhost:4000/${userId}/${item.spotify_id}/like`, {
+          fetch(`http://localhost:4000/${userId}/${item._id}/like`, {
             method: 'DELETE'
           })
             .then((response) => response.json())
