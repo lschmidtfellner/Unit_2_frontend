@@ -23,9 +23,15 @@ document
 
     // Fetch song IDs
     Promise.all([
-      fetch(`https://spotify-rec-backend.herokuapp.com/search?artist=${artist1}&song=${song1}`),
-      fetch(`https://spotify-rec-backend.herokuapp.com/search?artist=${artist2}&song=${song2}`),
-      fetch(`https://spotify-rec-backend.herokuapp.com/search?artist=${artist3}&song=${song3}`)
+      fetch(
+        `https://spotify-rec-backend.herokuapp.com/search?artist=${artist1}&song=${song1}`
+      ),
+      fetch(
+        `https://spotify-rec-backend.herokuapp.com/search?artist=${artist2}&song=${song2}`
+      ),
+      fetch(
+        `https://spotify-rec-backend.herokuapp.com/search?artist=${artist3}&song=${song3}`
+      )
     ])
       .then((responses) =>
         Promise.all(responses.map((response) => response.json()))
@@ -69,9 +75,12 @@ document
           const likeButton = document.createElement('button')
           likeButton.textContent = 'Like'
           likeButton.addEventListener('click', function () {
-            fetch(`https://spotify-rec-backend.herokuapp.com/${userId}/${item.spotify_id}/like`, {
-              method: 'POST'
-            })
+            fetch(
+              `https://spotify-rec-backend.herokuapp.com/${userId}/${item.spotify_id}/like`,
+              {
+                method: 'POST'
+              }
+            )
               .then((response) => response.json())
               .then((data) => console.log(data))
               .catch((error) => console.error('Error:', error))
@@ -82,7 +91,6 @@ document
         })
       })
   })
-
 
 const openLikes = async () => {
   document.querySelector('main').innerHTML = '<h1>Likes</h1>'
@@ -100,11 +108,11 @@ const openLikes = async () => {
             audio.controls = true
             audio.src = item[key]
             li.appendChild(audio)
-          }else if (key === 'artURL' && item[key]) {
-              const img = document.createElement('img')
-              img.src = item[key]
-              img.alt = 'Artwork'
-              li.appendChild(img)
+          } else if (key === 'artURL' && item[key]) {
+            const img = document.createElement('img')
+            img.src = item[key]
+            img.alt = 'Artwork'
+            li.appendChild(img)
           } else {
             li.textContent = `${key}: ${item[key]}`
           }
@@ -114,9 +122,12 @@ const openLikes = async () => {
         const deleteButton = document.createElement('button')
         deleteButton.textContent = 'Delete'
         deleteButton.addEventListener('click', function () {
-          fetch(`https://spotify-rec-backend.herokuapp.com/${userId}/${item._id}/like`, {
-            method: 'DELETE'
-          })
+          fetch(
+            `https://spotify-rec-backend.herokuapp.com/${userId}/${item._id}/like`,
+            {
+              method: 'DELETE'
+            }
+          )
             .then((response) => response.json())
             .then((data) => console.log(data))
             .then(openLikes)
@@ -151,9 +162,12 @@ const openBatches = async () => {
         deleteButton.textContent = 'Delete'
         deleteButton.addEventListener('click', function (event) {
           event.stopPropagation()
-          fetch(`https://spotify-rec-backend.herokuapp.com/${userId}/batch/${item._id}`, {
-            method: 'DELETE'
-          })
+          fetch(
+            `https://spotify-rec-backend.herokuapp.com/${userId}/batch/${item._id}`,
+            {
+              method: 'DELETE'
+            }
+          )
             .then((response) => response.json())
             .then((data) => {
               console.log(data)
@@ -170,14 +184,20 @@ const openBatches = async () => {
 
 const listBatch = async (batchId) => {
   document.querySelector('main').innerHTML = '<h1>Songs in Batch</h1>'
-  fetch(`https://spotify-rec-backend.herokuapp.com/${userId}/batches/${batchId}`)
+  fetch(
+    `https://spotify-rec-backend.herokuapp.com/${userId}/batches/${batchId}`
+  )
     .then((response) => response.json())
     .then((batch) => {
-      const songIds = batch.body[0].songs 
-      const songPromises = songIds.map((id) => fetch(`https://spotify-rec-backend.herokuapp.com/song/${id}`))
+      const songIds = batch.body[0].songs
+      const songPromises = songIds.map((id) =>
+        fetch(`https://spotify-rec-backend.herokuapp.com/song/${id}`)
+      )
 
       Promise.all(songPromises)
-        .then((responses) => Promise.all(responses.map((response) => response.json())))
+        .then((responses) =>
+          Promise.all(responses.map((response) => response.json()))
+        )
         .then((songs) => {
           songs.forEach((item) => {
             const ul = document.createElement('ul')
@@ -200,6 +220,22 @@ const listBatch = async (batchId) => {
               }
               ul.appendChild(li)
             }
+            // Add like button
+            const likeButton = document.createElement('button')
+            likeButton.textContent = 'Like'
+            likeButton.addEventListener('click', function () {
+              fetch(
+                `https://spotify-rec-backend.herokuapp.com/${userId}/${item.body.spotify_id}/like`,
+                {
+                  method: 'POST'
+                }
+              )
+                .then((response) => response.json())
+                .then((data) => console.log(data))
+                .catch((error) => console.error('Error:', error))
+            })
+
+            ul.appendChild(likeButton)
             resultDiv.appendChild(ul)
           })
         })
