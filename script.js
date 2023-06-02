@@ -23,9 +23,9 @@ document
 
     // Fetch song IDs
     Promise.all([
-      fetch(`http://localhost:4000/search?artist=${artist1}&song=${song1}`),
-      fetch(`http://localhost:4000/search?artist=${artist2}&song=${song2}`),
-      fetch(`http://localhost:4000/search?artist=${artist3}&song=${song3}`)
+      fetch(`https://spotify-rec-backend.herokuapp.com/search?artist=${artist1}&song=${song1}`),
+      fetch(`https://spotify-rec-backend.herokuapp.com/search?artist=${artist2}&song=${song2}`),
+      fetch(`https://spotify-rec-backend.herokuapp.com/search?artist=${artist3}&song=${song3}`)
     ])
       .then((responses) =>
         Promise.all(responses.map((response) => response.json()))
@@ -33,7 +33,7 @@ document
       .then((data) => {
         const seedTracks = data.map((item) => item.spotify_id).join(',')
         return fetch(
-          `http://localhost:4000/${userId}/recommendations?seed_tracks=${seedTracks}&seed_genres=${seedGenres}&max_popularity=${maxPopularity}`,
+          `https://spotify-rec-backend.herokuapp.com/${userId}/recommendations?seed_tracks=${seedTracks}&seed_genres=${seedGenres}&max_popularity=${maxPopularity}`,
           {
             method: 'POST'
           }
@@ -69,7 +69,7 @@ document
           const likeButton = document.createElement('button')
           likeButton.textContent = 'Like'
           likeButton.addEventListener('click', function () {
-            fetch(`http://localhost:4000/${userId}/${item.spotify_id}/like`, {
+            fetch(`https://spotify-rec-backend.herokuapp.com/${userId}/${item.spotify_id}/like`, {
               method: 'POST'
             })
               .then((response) => response.json())
@@ -86,7 +86,7 @@ document
 
 const openLikes = async () => {
   document.querySelector('main').innerHTML = '<h1>Likes</h1>'
-  fetch(`http://localhost:4000/${userId}/likes`)
+  fetch(`https://spotify-rec-backend.herokuapp.com/${userId}/likes`)
     .then((response) => response.json())
     .then((data) => {
       data.body.forEach((item) => {
@@ -114,7 +114,7 @@ const openLikes = async () => {
         const deleteButton = document.createElement('button')
         deleteButton.textContent = 'Delete'
         deleteButton.addEventListener('click', function () {
-          fetch(`http://localhost:4000/${userId}/${item._id}/like`, {
+          fetch(`https://spotify-rec-backend.herokuapp.com/${userId}/${item._id}/like`, {
             method: 'DELETE'
           })
             .then((response) => response.json())
@@ -134,7 +134,7 @@ const openLikes = async () => {
 
 const openBatches = async () => {
   document.querySelector('main').innerHTML = '<h1>Batches</h1>'
-  fetch(`http://localhost:4000/${userId}/batches`)
+  fetch(`https://spotify-rec-backend.herokuapp.com/${userId}/batches`)
     .then((response) => response.json())
     .then((data) => {
       data.body.forEach((item) => {
@@ -151,7 +151,7 @@ const openBatches = async () => {
         deleteButton.textContent = 'Delete'
         deleteButton.addEventListener('click', function (event) {
           event.stopPropagation()
-          fetch(`http://localhost:4000/${userId}/batch/${item._id}`, {
+          fetch(`https://spotify-rec-backend.herokuapp.com/${userId}/batch/${item._id}`, {
             method: 'DELETE'
           })
             .then((response) => response.json())
@@ -170,11 +170,11 @@ const openBatches = async () => {
 
 const listBatch = async (batchId) => {
   document.querySelector('main').innerHTML = '<h1>Songs in Batch</h1>'
-  fetch(`http://localhost:4000/${userId}/batches/${batchId}`)
+  fetch(`https://spotify-rec-backend.herokuapp.com/${userId}/batches/${batchId}`)
     .then((response) => response.json())
     .then((batch) => {
       const songIds = batch.body[0].songs 
-      const songPromises = songIds.map((id) => fetch(`http://localhost:4000/song/${id}`))
+      const songPromises = songIds.map((id) => fetch(`https://spotify-rec-backend.herokuapp.com/song/${id}`))
 
       Promise.all(songPromises)
         .then((responses) => Promise.all(responses.map((response) => response.json())))
