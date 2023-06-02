@@ -75,4 +75,10 @@ body {
     display: flex;
     flex-direction: column;
   }
+  input {
+    width: auto
+  }
+  #reccomendationForm {
+    flex-direction: column;
+  }
 }
