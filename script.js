@@ -1,3 +1,8 @@
+let userId = '6478aa30dee0f9f07836b151'
+const navRecs = document.getElementById('nav-get-recs')
+const navLikes = document.getElementById('nav-likes')
+const navBatches = document.getElementById('nav-batches')
+const resultDiv = document.querySelector('main')
 
 document
   .getElementById('recommendationForm')
@@ -37,7 +42,6 @@ document
         )
       })
       .then((response) => response.json())
-      //...
       .then((data) => {
         const resultDiv = document.getElementById('recommendationsResult')
         resultDiv.innerHTML = ''
@@ -75,50 +79,122 @@ document
       })
   })
 
-//open likes
-const navLikes = document.getElementById('nav-likes')
-
 const openLikes = async () => {
-  let userId = '6478aa30dee0f9f07836b151'
   document.querySelector('main').innerHTML = '<h1>Likes</h1>'
   fetch(`http://localhost:4000/${userId}/likes`)
-  .then((response) => response.json())
-  .then((data) => {
-    data.body.forEach((item) => {
-      const resultDiv = document.querySelector('main')
-      const ul = document.createElement('ul')
-      for (const key in item) {
-        if (key === '_id' || key === 'user' || key === '__v') continue;
-        const li = document.createElement('li');
-        if (key === 'previewURL' && item[key]) {
-          const audio = document.createElement('audio');
-          audio.controls = true;
-          audio.src = item[key];
-          li.appendChild(audio);
-        } else {
-          li.textContent = `${key}: ${item[key]}`;
+    .then((response) => response.json())
+    .then((data) => {
+      data.body.forEach((item) => {
+        const ul = document.createElement('ul')
+        for (const key in item) {
+          if (key === '_id' || key === 'user' || key === '__v') continue
+          const li = document.createElement('li')
+          if (key === 'previewURL' && item[key]) {
+            const audio = document.createElement('audio')
+            audio.controls = true
+            audio.src = item[key]
+            li.appendChild(audio)
+          } else {
+            li.textContent = `${key}: ${item[key]}`
+          }
+          ul.appendChild(li)
         }
-        ul.appendChild(li);
-      }
         // Add delete button
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
+        const deleteButton = document.createElement('button')
+        deleteButton.textContent = 'Delete'
         deleteButton.addEventListener('click', function () {
           fetch(`http://localhost:4000/${userId}/${item._id}/like`, {
             method: 'DELETE'
           })
             .then((response) => response.json())
             .then((data) => console.log(data))
+            .then(openLikes)
             .catch((error) => console.error('Error:', error))
-        });
+        })
 
-        ul.appendChild(deleteButton);
-        resultDiv.appendChild(ul);
-      });
+        ul.appendChild(deleteButton)
+        resultDiv.appendChild(ul)
+      })
     })
     .catch((error) => {
-      console.error('Error:', error);
-    });
-};
+      console.error('Error:', error)
+    })
+}
 
-navLikes.addEventListener('click', openLikes);
+const openBatches = async () => {
+  document.querySelector('main').innerHTML = '<h1>Batches</h1>'
+  fetch(`http://localhost:4000/${userId}/batches`)
+    .then((response) => response.json())
+    .then((data) => {
+      data.body.forEach((item) => {
+        const div = document.createElement('div')
+        div.className = 'batch-div'
+        div.innerHTML = item.name
+
+        div.addEventListener('click', function () {
+          listBatch(item._id)
+        })
+
+        // Add delete button
+        const deleteButton = document.createElement('button')
+        deleteButton.textContent = 'Delete'
+        deleteButton.addEventListener('click', function (event) {
+          event.stopPropagation()
+          fetch(`http://localhost:4000/${userId}/batch/${item._id}`, {
+            method: 'DELETE'
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data)
+            })
+            .then(openBatches)
+            .catch((error) => console.error('Error:', error))
+        })
+
+        div.appendChild(deleteButton)
+        resultDiv.appendChild(div)
+      })
+    })
+}
+
+const listBatch = async (batchId) => {
+  document.querySelector('main').innerHTML = '<h1>Songs in Batch</h1>'
+  fetch(`http://localhost:4000/${userId}/batches/${batchId}`)
+    .then((response) => response.json())
+    .then((batch) => {
+      const songIds = batch.body[0].songs 
+      const songPromises = songIds.map((id) => fetch(`http://localhost:4000/song/${id}`))
+
+      Promise.all(songPromises)
+        .then((responses) => Promise.all(responses.map((response) => response.json())))
+        .then((songs) => {
+          songs.forEach((item) => {
+            const ul = document.createElement('ul')
+            for (const key in item.body) {
+              if (key === '_id' || key === 'user' || key === '__v') continue
+              const li = document.createElement('li')
+              if (key === 'previewURL' && item.body[key]) {
+                const audio = document.createElement('audio')
+                audio.controls = true
+                audio.src = item.body[key]
+                li.appendChild(audio)
+              } else {
+                li.textContent = `${key}: ${item.body[key]}`
+              }
+              ul.appendChild(li)
+            }
+            resultDiv.appendChild(ul)
+          })
+        })
+    })
+    .catch((error) => {
+      console.error('Error:', error)
+    })
+}
+
+
+navLikes.addEventListener('click', openLikes)
+navRecs.addEventListener('click', function () {
+  location.reload()
+})
+navBatches.addEventListener('click', openBatches)
