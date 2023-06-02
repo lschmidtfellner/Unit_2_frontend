@@ -9,8 +9,6 @@ document
   .addEventListener('submit', function (event) {
     event.preventDefault()
 
-    const userId = document.getElementById('userId').value
-
     const song1 = document.getElementById('song1').value
     const artist1 = document.getElementById('artist1').value
 
@@ -48,6 +46,7 @@ document
 
         data.forEach((item) => {
           const ul = document.createElement('ul')
+          ul.className = 'song-card'
           for (const key in item) {
             const li = document.createElement('li')
             if (key === 'previewURL' && item[key]) {
@@ -55,6 +54,11 @@ document
               audio.controls = true
               audio.src = item[key]
               li.appendChild(audio)
+            } else if (key === 'artURL' && item[key]) {
+              const img = document.createElement('img')
+              img.src = item[key]
+              img.alt = 'Artwork'
+              li.appendChild(img)
             } else {
               li.textContent = `${key}: ${item[key]}`
             }
@@ -79,6 +83,7 @@ document
       })
   })
 
+
 const openLikes = async () => {
   document.querySelector('main').innerHTML = '<h1>Likes</h1>'
   fetch(`http://localhost:4000/${userId}/likes`)
@@ -86,6 +91,7 @@ const openLikes = async () => {
     .then((data) => {
       data.body.forEach((item) => {
         const ul = document.createElement('ul')
+        ul.className = 'song-card'
         for (const key in item) {
           if (key === '_id' || key === 'user' || key === '__v') continue
           const li = document.createElement('li')
@@ -94,6 +100,11 @@ const openLikes = async () => {
             audio.controls = true
             audio.src = item[key]
             li.appendChild(audio)
+          }else if (key === 'artURL' && item[key]) {
+              const img = document.createElement('img')
+              img.src = item[key]
+              img.alt = 'Artwork'
+              li.appendChild(img)
           } else {
             li.textContent = `${key}: ${item[key]}`
           }
@@ -170,6 +181,7 @@ const listBatch = async (batchId) => {
         .then((songs) => {
           songs.forEach((item) => {
             const ul = document.createElement('ul')
+            ul.className = 'song-card'
             for (const key in item.body) {
               if (key === '_id' || key === 'user' || key === '__v') continue
               const li = document.createElement('li')
@@ -178,6 +190,11 @@ const listBatch = async (batchId) => {
                 audio.controls = true
                 audio.src = item.body[key]
                 li.appendChild(audio)
+              } else if (key === 'artURL' && item.body[key]) {
+                const img = document.createElement('img')
+                img.src = item.body[key]
+                img.alt = 'Artwork'
+                li.appendChild(img)
               } else {
                 li.textContent = `${key}: ${item.body[key]}`
               }
@@ -191,7 +208,6 @@ const listBatch = async (batchId) => {
       console.error('Error:', error)
     })
 }
-
 
 navLikes.addEventListener('click', openLikes)
 navRecs.addEventListener('click', function () {
