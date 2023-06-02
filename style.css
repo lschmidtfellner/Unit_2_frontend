@@ -66,3 +66,13 @@ img {
 body {
   font-family: 'Roboto', sans-serif;
 }
+
+@media (max-width: 880px) {
+  h1 {
+    font-size: 20px;
+  }
+  .entry {
+    display: flex;
+    flex-direction: column;
+  }
+}
